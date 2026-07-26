@@ -1,0 +1,74 @@
+name: iOS Build
+
+# main への push・手動実行で、署名なし IPA をビルドして Artifacts に保存する。
+# Windows PC からは、この Artifact をダウンロードして Sideloadly で
+# iPhone にインストールする(手順は docs/SETUP_WINDOWS11.md 参照)。
+on:
+  push:
+    branches:
+      - main
+      - 'claude/**'
+  workflow_dispatch:
+
+jobs:
+  # Dart の静的解析とテスト(Linux ランナーで高速に実行)
+  analyze-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: 依存関係の取得
+        run: flutter pub get
+
+      - name: 静的解析
+        run: flutter analyze
+
+      - name: テスト実行
+        run: flutter test
+
+  # iOS ビルドは macOS でしかできないため、GitHub の macOS ランナーを使う
+  build-ipa:
+    needs: analyze-and-test
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: iOS プラットフォームファイルの生成
+        # ios/ ディレクトリはリポジトリに含めず、ビルド時に生成する
+        run: |
+          flutter create --platforms=ios --org com.kobayashi0613 --project-name mountain100 .
+
+      - name: アプリ表示名の設定
+        run: |
+          /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName Mountain100" ios/Runner/Info.plist 2>/dev/null \
+            || /usr/libexec/PlistBuddy -c "Add :CFBundleDisplayName string Mountain100" ios/Runner/Info.plist
+
+      - name: 依存関係の取得
+        run: flutter pub get
+
+      - name: iOS ビルド(署名なし)
+        run: flutter build ios --release --no-codesign
+
+      - name: IPA へパッケージング
+        run: |
+          mkdir -p build/ios/ipa/Payload
+          cp -R build/ios/iphoneos/Runner.app build/ios/ipa/Payload/
+          cd build/ios/ipa
+          zip -qry Mountain100-unsigned.ipa Payload
+
+      - name: IPA をアップロード
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mountain100-unsigned-ipa
+          path: build/ios/ipa/Mountain100-unsigned.ipa
+          retention-days: 30
