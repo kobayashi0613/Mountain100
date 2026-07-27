@@ -41,7 +41,8 @@ Mac も Apple Developer アカウントも不要です。
 - **絞り込み** — すべて / 登頂済み / 未登頂
 - **検索** — 山名・読み・都道府県・山域で検索
 - **詳細表示** — 最高峰・標高・都道府県・山域
-- **バックアップ** — 記録を JSON ファイルに書き出し／読み込み
+- **特別天然記念物の記録** — 動物・植物・地質鉱物・天然保護区域の区分ごとのページで全75件を表示。見たことがあるものをチェックで記録できます
+- **バックアップ** — 登頂記録と「見た」記録をまとめて JSON ファイルに書き出し／読み込み
 - **ダークモード対応**
 
 ## 記録の保存場所について
@@ -69,12 +70,18 @@ Mac も Apple Developer アカウントも不要です。
 
 ```
 docs/                          # Web版（GitHub Pages で公開されるフォルダ）
-├── index.html
+├── index.html                 # 日本百名山（トップページ）
+├── monuments-animals.html     # 特別天然記念物（動物）
+├── monuments-plants.html      # 特別天然記念物（植物）
+├── monuments-geology.html     # 特別天然記念物（地質鉱物）
+├── monuments-areas.html       # 特別天然記念物（天然保護区域）
 ├── styles.css
-├── app.js
+├── app.js                     # 百名山ページ用
+├── monuments.js               # 特別天然記念物ページ共通
 ├── sw.js                      # オフライン動作用 Service Worker
 ├── manifest.webmanifest       # ホーム画面追加時の名前・アイコン設定
 ├── mountain100.json
+├── special-natural-monuments.json
 └── icons/
 
 Mountain100/                   # iOS版（SwiftUI）
@@ -91,6 +98,8 @@ Mountain100/                   # iOS版（SwiftUI）
 
 ## データ
 
+### mountain100.json（日本百名山）
+
 各山について以下の情報を収録しています。
 
 | フィールド | 内容 |
@@ -102,3 +111,16 @@ Mountain100/                   # iOS版（SwiftUI）
 | `elevation_m` | 標高（m、最高地点） |
 | `prefectures` | 所在都道府県 |
 | `range` | 山域 |
+
+### special-natural-monuments.json（特別天然記念物）
+
+文化財保護法に基づく特別天然記念物 全75件（動物21・植物30・地質鉱物20・天然保護区域4）。
+
+| フィールド | 内容 |
+|---|---|
+| `id` | 通し番号（1–75、動物→植物→地質鉱物→天然保護区域の順） |
+| `category` | 区分（動物 / 植物 / 地質鉱物 / 天然保護区域） |
+| `name` | 名称（指定名称） |
+| `kana` | 読み |
+| `prefectures` | 所在または分布する都道府県 |
+| `note` | 内容の補足 |

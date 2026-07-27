@@ -1,11 +1,17 @@
-const CACHE = 'mountain100-v1';
+const CACHE = 'mountain100-v2';
 
 const ASSETS = [
   './',
   './index.html',
+  './monuments-animals.html',
+  './monuments-plants.html',
+  './monuments-geology.html',
+  './monuments-areas.html',
   './styles.css',
   './app.js',
+  './monuments.js',
   './mountain100.json',
+  './special-natural-monuments.json',
   './manifest.webmanifest',
   './icons/icon-180.png',
   './icons/icon-192.png',
@@ -39,10 +45,10 @@ self.addEventListener('fetch', (e) => {
       fetch(req)
         .then((res) => {
           const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put('./index.html', copy));
+          caches.open(CACHE).then((c) => c.put(req, copy));
           return res;
         })
-        .catch(() => caches.match('./index.html'))
+        .catch(() => caches.match(req).then((hit) => hit || caches.match('./index.html')))
     );
     return;
   }
