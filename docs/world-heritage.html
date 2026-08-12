@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>特別天然記念物（地質鉱物）</title>
-<meta name="description" content="特別天然記念物（地質鉱物）の一覧と「見た」記録">
+<title>日本の世界遺産</title>
+<meta name="description" content="日本の世界遺産の一覧と訪問記録">
 <meta name="theme-color" content="#16324a">
 
 <link rel="manifest" href="./manifest.webmanifest">
@@ -17,46 +17,45 @@
 
 <link rel="stylesheet" href="./styles.css">
 </head>
-<body data-category="地質鉱物">
+<body>
 
 <nav class="site-nav" aria-label="ページの切り替え">
   <a href="./index.html">日本百名山</a>
-  <a href="./world-heritage.html">世界遺産</a>
-  <a href="./monuments-animals.html" class="on" aria-current="page">特別天然記念物</a>
+  <a href="./world-heritage.html" class="on" aria-current="page">世界遺産</a>
+  <a href="./monuments-animals.html">特別天然記念物</a>
 </nav>
 
 <header class="hero">
-  <h1>特別天然記念物</h1>
-  <nav class="cats" aria-label="区分">
-    <a href="./monuments-animals.html">動物</a>
-    <a href="./monuments-plants.html">植物</a>
-    <a href="./monuments-geology.html" class="on" aria-current="page">地質鉱物</a>
-    <a href="./monuments-areas.html">保護区域</a>
-  </nav>
+  <h1>日本の世界遺産</h1>
+  <div class="cats" role="tablist" aria-label="区分">
+    <button role="tab" data-category="all" class="on" aria-selected="true">すべて</button>
+    <button role="tab" data-category="文化遺産" aria-selected="false">文化遺産</button>
+    <button role="tab" data-category="自然遺産" aria-selected="false">自然遺産</button>
+  </div>
   <div class="progress">
     <div class="progress-line">
-      <span class="progress-label">見た記録</span>
-      <span class="progress-count"><strong id="seenCount">0</strong> / <span id="totalCount">0</span> 件</span>
+      <span class="progress-label">訪問記録</span>
+      <span class="progress-count"><strong id="visitedCount">0</strong> / <span id="totalCount">0</span> 件</span>
     </div>
     <div class="bar"><div class="bar-fill" id="barFill"></div></div>
   </div>
 </header>
 
 <div class="toolbar">
-  <input type="search" id="search" placeholder="名称・読み・都道府県で検索" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="検索">
+  <input type="search" id="search" placeholder="名称・読み・都道府県・登録年で検索" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="検索">
   <div class="segmented" role="tablist" aria-label="表示の絞り込み">
     <button role="tab" data-filter="all" class="on" aria-selected="true">すべて</button>
-    <button role="tab" data-filter="seen" aria-selected="false">見た</button>
-    <button role="tab" data-filter="unseen" aria-selected="false">まだ</button>
+    <button role="tab" data-filter="visited" aria-selected="false">訪問済み</button>
+    <button role="tab" data-filter="unvisited" aria-selected="false">未訪問</button>
   </div>
 </div>
 
 <main>
   <ul id="list" class="list"></ul>
-  <p id="empty" class="empty" hidden>該当する項目がありません</p>
+  <p id="empty" class="empty" hidden>該当する物件がありません</p>
   <p id="count" class="count"></p>
 
-  <footer class="foot">文化財保護法に基づく特別天然記念物（地質鉱物）。記録のバックアップはトップページ（日本百名山）からまとめて書き出せます。</footer>
+  <footer class="foot">UNESCO世界遺産条約に基づき登録された日本国内の物件。記録のバックアップはトップページ（日本百名山）からまとめて書き出せます。</footer>
 </main>
 
 <dialog id="detail" class="sheet">
@@ -66,12 +65,12 @@
   </div>
   <button id="dToggle" class="visit-toggle">
     <span class="box" aria-hidden="true"></span>
-    <span class="visit-text">見たことを記録する</span>
+    <span class="visit-text">訪問済みにする</span>
   </button>
   <dl id="dInfo" class="info"></dl>
   <p id="dNote" class="note" hidden></p>
 </dialog>
 
-<script src="./monuments.js"></script>
+<script src="./world-heritage.js"></script>
 </body>
 </html>

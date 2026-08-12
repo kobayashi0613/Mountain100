@@ -1,16 +1,19 @@
-const CACHE = 'mountain100-v2';
+const CACHE = 'mountain100-v3';
 
 const ASSETS = [
   './',
   './index.html',
+  './world-heritage.html',
   './monuments-animals.html',
   './monuments-plants.html',
   './monuments-geology.html',
   './monuments-areas.html',
   './styles.css',
   './app.js',
+  './world-heritage.js',
   './monuments.js',
   './mountain100.json',
+  './world-heritage.json',
   './special-natural-monuments.json',
   './manifest.webmanifest',
   './icons/icon-180.png',
