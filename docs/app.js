@@ -1,6 +1,7 @@
 'use strict';
 
 const STORAGE_KEY = 'visitedMountainIDs';
+const HERITAGE_KEY = 'visitedHeritageIDs'; // 世界遺産の訪問記録（world-heritage.js と共通）
 const MONUMENT_KEY = 'seenMonumentIDs'; // 特別天然記念物の「見た」記録（monuments.js と共通）
 
 const $ = (id) => document.getElementById(id);
@@ -193,9 +194,9 @@ document.querySelectorAll('.segmented button').forEach((btn) => {
 
 /* ---------- バックアップ ---------- */
 
-function loadSeenMonuments() {
+function loadIDs(key) {
   try {
-    const raw = JSON.parse(localStorage.getItem(MONUMENT_KEY) || '[]');
+    const raw = JSON.parse(localStorage.getItem(key) || '[]');
     return Array.isArray(raw) ? raw.filter(Number.isInteger) : [];
   } catch {
     return [];
@@ -205,10 +206,11 @@ function loadSeenMonuments() {
 $('export').addEventListener('click', () => {
   const payload = {
     app: 'Mountain100',
-    version: 2,
+    version: 3,
     exportedAt: new Date().toISOString(),
     visited: [...visited].sort((a, b) => a - b),
-    seenMonuments: loadSeenMonuments().sort((a, b) => a - b),
+    visitedHeritage: loadIDs(HERITAGE_KEY).sort((a, b) => a - b),
+    seenMonuments: loadIDs(MONUMENT_KEY).sort((a, b) => a - b),
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -228,13 +230,16 @@ $('importFile').addEventListener('change', async (e) => {
     const data = JSON.parse(await file.text());
     const ids = (data.visited || []).filter(Number.isInteger);
     if (!Array.isArray(data.visited)) throw new Error('形式が違います');
-    // 旧バージョンのバックアップには seenMonuments が無い（その場合は百名山の記録のみ置き換える）
+    // 旧バージョンのバックアップには世界遺産・特別天然記念物の記録が無い（その場合はその記録を残す）
+    const heritage = Array.isArray(data.visitedHeritage) ? data.visitedHeritage.filter(Number.isInteger) : null;
     const seen = Array.isArray(data.seenMonuments) ? data.seenMonuments.filter(Number.isInteger) : null;
     const parts = [`百名山 ${ids.length}座`];
+    if (heritage) parts.push(`世界遺産 ${heritage.length}件`);
     if (seen) parts.push(`特別天然記念物 ${seen.length}件`);
     if (!confirm(`${parts.join('・')}の記録を読み込みます。現在の記録は置き換えられます。よろしいですか？`)) return;
     visited = new Set(ids);
     saveVisited();
+    if (heritage) localStorage.setItem(HERITAGE_KEY, JSON.stringify(heritage.sort((a, b) => a - b)));
     if (seen) localStorage.setItem(MONUMENT_KEY, JSON.stringify(seen.sort((a, b) => a - b)));
     render();
     alert('記録を読み込みました。');
